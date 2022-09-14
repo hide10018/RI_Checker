@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>987381351843-ldtfdefehp5ko1mh9dpi18hbasfjofcq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.987381351843-ldtfdefehp5ko1mh9dpi18hbasfjofcq</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDgYMAFNAiN6fvu9Gr89enPMWEcxH6pfAE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>987381351843</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>transportpredictapp.com.example.transportPredictApp</string>
+	<key>PROJECT_ID</key>
+	<string>iot-database-fb343</string>
+	<key>STORAGE_BUCKET</key>
+	<string>iot-database-fb343.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:987381351843:ios:84e91a18c8dfd5918a8616</string>
+	<key>DATABASE_URL</key>
+	<string>https://iot-database-fb343-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

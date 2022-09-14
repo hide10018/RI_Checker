@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "987381351843",
+    "firebase_url": "https://iot-database-fb343-default-rtdb.firebaseio.com",
+    "project_id": "iot-database-fb343",
+    "storage_bucket": "iot-database-fb343.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987381351843:android:a8cdd1e2d8af35a88a8616",
+        "android_client_info": {
+          "package_name": "transport_predict_app.com.example.transport_predict_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "987381351843-pqdtj5vov1ja87uj2kh2b898qrqp9fla.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsu6lv9kK6boOicH16xRBwq-Ej_2ajrC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "987381351843-pqdtj5vov1ja87uj2kh2b898qrqp9fla.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "987381351843-ldtfdefehp5ko1mh9dpi18hbasfjofcq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "transportpredictapp.com.example.transportPredictApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
