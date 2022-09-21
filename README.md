@@ -1,4 +1,5 @@
-# transport_predict_app
+# RI Checker
+室内情報を確認できるモバイルアプリです。
 
 A new Flutter project.
 
