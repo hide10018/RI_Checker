@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  settings_ui: ^1.0.0
   flutter:
     sdk: flutter
 
@@ -39,6 +40,7 @@ dependencies:
   fl_chart: ^0.55.0
   flutter_speed_dial: ^6.0.0
   persistent_bottom_nav_bar: ^4.0.2
+  flutter_settings_screens: ^0.3.0-null-safety
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +81,7 @@ flutter:
     - assets/get.png
     - assets/chart2.png
     - assets/dust-icon-6.jpg
+    - assets/ifn0112.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

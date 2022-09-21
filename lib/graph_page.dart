@@ -1,216 +1,25 @@
+import 'dart:math';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-void initState() {
-  Future(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp();
-    final ref = FirebaseDatabase.instance.ref();
+List<double> tempValue = List<double>.generate(24, (i)=>0);
 
-    final onedaytmp = await ref.child(
-        'weather/temperature/onedaytmp').get();
-    final onedayhum = await ref.child(
-        'weather/humidity/onedayhum').get();
-    final onedaydust = await ref.child('dust/onedaydust').get();
+List<double> humValue = List<double>.generate(24, (i)=>20);
 
-    var tempKey   = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var tempValue = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+List<double> dustValue = List<double>.generate(24, (i)=>0);
 
-    var humKey = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var humValue = <double>[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
+List<double> apValue = List<double>.generate(24, (i)=>970);
 
-    var dustKey  = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    var dustValue = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+double_cast(data, list){
 
+  var x = double.parse("${data}");
 
-    tempKey.clear();
-    tempValue.clear();
-
-
-    // final daytmp = onedaytmp.child;
-    var date = DateTime.now();
-
-    if (onedaytmp.exists) {
-      for (var i = date.hour; i >= 0; i--) {
-        // print(onedaytmp
-        //     .child("${i}")
-        //     .key);
-
-        var x = onedaytmp
-            .child("${i}")
-            .key as String;
-
-        var y = onedaytmp
-            .child("${i}")
-            .value as int;
-
-        var xx = double.parse(x);
-        var yy = double.parse("${y}");
-
-        tempKey.add(xx);
-
-        tempValue.add(yy);
-
-
-        var x2 = onedayhum
-            .child("${i}")
-            .key as String;
-
-        var y2 = onedayhum
-            .child("${i}")
-            .value as int;
-
-        var xx2 = double.parse(x2);
-        var yy2 = double.parse("${y2}");
-
-        humKey.add(xx2);
-
-        humValue.add(yy2);
-
-        print(humKey);
-
-
-        var x3 = onedaydust
-            .child("${i}")
-            .key as String;
-
-        var y3 = onedaydust
-            .child("${i}")
-            .value as double;
-
-        var xx3 = double.parse(x3);
-        var yy3 = double.parse("${y3}");
-
-        dustKey.add(xx3);
-
-        dustValue.add(yy3);
-
-
-        print(onedaytmp
-            .child("$i")
-            .value);
-        print("test");
-      }
-
-      for (var i = 23; i > date.hour; i--) {
-        // print(onedaytmp
-        //     .child("${i}")
-        //     .key);
-
-        var x = onedaytmp
-            .child("${i}")
-            .key as String;
-
-        var y = onedaytmp
-            .child("${i}")
-            .value as int;
-
-        var xx = double.parse(x);
-        var yy = double.parse("${y}");
-
-        tempKey.add(xx);
-
-        tempValue.add(yy);
-
-
-        var x2 = onedayhum
-            .child("${i}")
-            .key as String;
-
-        var y2 = onedayhum
-            .child("${i}")
-            .value as int;
-
-        var xx2 = double.parse(x2);
-        var yy2 = double.parse("${y2}");
-
-        humKey.add(xx2);
-
-        humValue.add(yy2);
-
-        print(humKey);
-
-
-        var x3 = onedaydust
-            .child("${i}")
-            .key as String;
-
-        var y3 = onedaydust
-            .child("${i}")
-            .value as double;
-
-        var xx3 = double.parse(x3);
-        var yy3 = double.parse("${y3}");
-
-        dustKey.add(xx3);
-
-        dustValue.add(yy3);
-
-
-        print(onedaytmp
-            .child("$i")
-            .value);
-        print("test");
-      }
-
-      print(tempKey);
-      print(tempValue);
-      print(humValue);
-
-
-      //   setState(() {
-      // tmp = tmpsnapshot
-      //     .child('tag1')
-      //     .value;
-      // hum = humsnapshot
-      //     .child('tag1')
-      //     .value;
-      // });
-    } else {
-      print('No data available.');
-    }
-
-// List<Object?> tempKey = <Object?>[];
-// final List<Object?> tempValue = <Object?>[];
-
-
-// final daytmp = onedaytmp.child;
-    if (onedaytmp.exists) {
-      for (var i = 0; i <= 23; i++) {
-        // print(onedaytmp
-        //     .child("${i}")
-        //     .key);
-
-        var x = onedaytmp
-            .child("${i}")
-            .key as String;
-
-        var y = onedaytmp
-            .child("${i}")
-            .value as int;
-
-        var xx = double.parse(x);
-        var yy = double.parse("${y}");
-
-
-        tempKey.add(xx);
-
-        tempValue.add(yy);
-
-
-        print(onedaytmp
-            .child("$i")
-            .value);
-        print("test");
-      }
-
-      print(tempKey);
-      print(tempValue);
-    }
-  });
+  list.add(x);
 }
+
 //
 // class LineChartWidget extends StatelessWidget{
 //
@@ -269,26 +78,121 @@ class GraphPage extends StatefulWidget {
 class _GraphPageState extends State<GraphPage>{
 
 
-  var screenSize = MediaQuery;
-  final test = "" ;
-  // List<double> tempKey = List(23);
-  // List<double> tempValue = List(23);
 
-
-  var tempValue = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-
-  var humValue = <double>[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
-
-  var dustValue = <double>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
   final List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a)
   ];
   @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp();
+      final ref = FirebaseDatabase.instance.ref();
+
+      final onedaytmp = await ref.child(
+          'weather/temperature/onedaytmp').get();
+      final onedayhum = await ref.child(
+          'weather/humidity/onedayhum').get();
+      final onedaydust = await ref.child('dust/onedaydust').get();
+
+      final onedayap = await ref.child('ap/onedayap').get();
+
+
+      // final daytmp = onedaytmp.child;
+      var date = DateTime.now();
+
+      setState(() {
+        print(tempValue);
+        tempValue.clear();
+        print("a");
+        humValue.clear();
+
+        dustValue.clear();
+
+        apValue.clear();
+        print("a");
+        print(tempValue);
+
+
+          for (var i = date.hour; i >= 0; i--) {
+            // print(onedaytmp
+            //     .child("${i}")
+            //     .key);
+            double_cast(onedaytmp.child("${i}").value as int, tempValue);
+
+            double_cast(onedayhum.child("${i}").value as int, humValue);
+
+            double_cast(onedaydust.child("${i}").value as double, dustValue);
+
+            double_cast(onedayap.child("${i}").value as double, apValue);
+
+          }
+
+          for (var i = 23; i > date.hour; i--) {
+            // print(onedaytmp
+            //     .child("${i}")
+            //     .key);
+            double_cast(onedaytmp.child("${i}").value as int, tempValue);
+
+            double_cast(onedayhum.child("${i}").value as int, humValue);
+
+            double_cast(onedaydust.child("${i}").value as double, dustValue);
+
+            double_cast(onedayap.child("${i}").value as double, apValue);
+
+          }
+
+        print("a");
+        print(tempValue);
+
+
+
+
+
+// List<Object?> tempKey = <Object?>[];
+// final List<Object?> tempValue = <Object?>[];
+
+
+// final daytmp = onedaytmp.child;
+//         if (onedaytmp.exists) {
+//           for (var i = 0; i <= 23; i++) {
+//             // print(onedaytmp
+//             //     .child("${i}")
+//             //     .key);
+//
+//             var y = onedaytmp
+//                 .child("${i}")
+//                 .value as int;
+//
+//             var yy = double.parse("${y}");
+//
+//
+//             tempValue.add(yy);
+//
+//
+//             print(onedaytmp
+//                 .child("$i")
+//                 .value);
+//             print("test");
+//           }
+//
+//           print(tempValue);
+//         }
+      });
+    });
+  }
+  var screenSize = MediaQuery;
+  final test = "" ;
+  // List<double> tempKey = List(23);
+  // List<double> tempValue = List(23);
+
+
+
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
 
       floatingActionButton: FloatingActionButton.extended(
@@ -305,38 +209,19 @@ class _GraphPageState extends State<GraphPage>{
                 'weather/humidity/onedayhum').get();
             final onedaydust = await ref.child('dust/onedaydust').get();
 
+            final onedayap = await ref.child('ap/onedayap').get();
+
 
             setState(() {
+              print("tempValue");
+              print(tempValue);
               tempValue.clear();
 
               humValue.clear();
 
               dustValue.clear();
 
-
-              // final daytmp = onedaytmp.child;
-              if (onedaytmp.exists) {
-                for (var i = 0; i <= 23; i++) {
-                  print(onedaytmp
-                      .child("${i}")
-                      .key);
-                  print(onedaytmp
-                      .child("${i}")
-                      .value);
-                }
-
-
-                //   setState(() {
-                // tmp = tmpsnapshot
-                //     .child('tag1')
-                //     .value;
-                // hum = humsnapshot
-                //     .child('tag1')
-                //     .value;
-                // });
-              } else {
-                print('No data available.');
-              }
+              apValue.clear();
 
               // List<Object?> tempKey = <Object?>[];
               // final List<Object?> tempValue = <Object?>[];
@@ -350,38 +235,16 @@ class _GraphPageState extends State<GraphPage>{
                   // print(onedaytmp
                   //     .child("${i}")
                   //     .key);
-                  var y = onedaytmp
-                      .child("${i}")
-                      .value as int;
+                  double_cast(onedaytmp.child("${i}").value as int, tempValue);
 
-                  var yy = double.parse("${y}");
+                  double_cast(onedayhum.child("${i}").value as int, humValue);
 
+                  double_cast(onedaydust.child("${i}").value as double, dustValue);
 
-                  tempValue.add(yy);
-
-                  var y2 = onedayhum
-                      .child("${i}")
-                      .value as int;
-
-                  var yy2 = double.parse("${y2}");
+                  double_cast(onedayap.child("${i}").value as double, apValue);
 
 
-                  humValue.add(yy2);
-
-                  var y3 = onedaydust
-                      .child("${i}")
-                      .value as double;
-
-                  var y4 = y3.toStringAsFixed(3);
-
-                  var yy3 = double.parse(y4);
-
-                  dustValue.add(yy3);
-
-
-                  print(onedaytmp
-                      .child("$i")
-                      .value);
+                  print(apValue);
                   print("test");
                 }
 
@@ -389,43 +252,20 @@ class _GraphPageState extends State<GraphPage>{
                   // print(onedaytmp
                   //     .child("${i}")
                   //     .key);
-                  var y = onedaytmp
-                      .child("${i}")
-                      .value as int;
+                  double_cast(onedaytmp.child("${i}").value as int, tempValue);
 
-                  var yy = double.parse("${y}");
+                  double_cast(onedayhum.child("${i}").value as int, humValue);
 
-                  tempValue.add(yy);
+                  double_cast(onedaydust.child("${i}").value as double, dustValue);
 
-                  var y2 = onedayhum
-                      .child("${i}")
-                      .value as int;
-
-                  var yy2 = double.parse("${y2}");
-                  humValue.add(yy2);
-
-
-                  var y3 = onedaydust
-                      .child("${i}")
-                      .value as double;
-
-                  var y4 = y3.toStringAsFixed(3);
-
-                  var yy3 = double.parse(y4);
-
-
-                  dustValue.add(yy3);
-
-
-                  print(onedaytmp
-                      .child("$i")
-                      .value);
-                  print("test");
+                  double_cast(onedayap.child("${i}").value as double, apValue);
                 }
-                print(tempValue);
-                print(humValue);
+
               }
+
             });
+            print(tempValue);
+            print("humValue");
         }, label: Text('データ取得'),
         icon: Icon(Icons.download),
 
@@ -450,7 +290,7 @@ class _GraphPageState extends State<GraphPage>{
                     height: 0,
                 ),
 
-                  const Text("temperature(℃)",
+                  const Text("Temperature(℃)",
                     style: TextStyle(
                     fontSize: 20,
                     color: Colors.lightBlueAccent
@@ -469,8 +309,8 @@ class _GraphPageState extends State<GraphPage>{
                       LineChartData(
                           minX: 0,
                           maxX: 25,
-                          minY: 0,
-                          maxY: 40,
+                          minY: tempValue.reduce(min)-3,
+                          maxY: tempValue.reduce(max)+3,
                           lineBarsData: [
                             LineChartBarData(
                                 spots: [
@@ -515,6 +355,7 @@ class _GraphPageState extends State<GraphPage>{
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   getTitlesWidget: leftTitleWidgets,
+                                  reservedSize: 33,
                                 ),
                               ),
 
@@ -530,7 +371,7 @@ class _GraphPageState extends State<GraphPage>{
                   ),
                 ),
 
-                  const Text('humidity(%)',
+                  const Text('Humidity(%)',
                     style: TextStyle(
                     fontSize: 20,
                     color: Colors.red,
@@ -548,8 +389,8 @@ class _GraphPageState extends State<GraphPage>{
                           LineChartData(
                             minX: 0,
                             maxX: 25,
-                            minY: 20,
-                            maxY: 80,
+                            minY: humValue.reduce(min)-7,
+                            maxY: humValue.reduce(max)+7,
                             lineBarsData: [
                               LineChartBarData(
                                   spots: [
@@ -594,6 +435,7 @@ class _GraphPageState extends State<GraphPage>{
                                   sideTitles: SideTitles(
                                     showTitles: true,
                                     getTitlesWidget: leftTitleWidgets,
+                                    reservedSize: 33,
                                   ),
                                 ),
 
@@ -609,6 +451,87 @@ class _GraphPageState extends State<GraphPage>{
                         )
                     ),
                   ),
+
+                    const Text("Air pressure(hPa)",
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.greenAccent
+                      ),
+                    ),
+
+                    SingleChildScrollView(//temp chart
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: screenSize.width >= 500? EdgeInsets.fromLTRB(screenSize.width*0.1, 50, 0, 50):const EdgeInsets.fromLTRB(0, 50, 0, 50),
+                          width: screenSize.width >= 500? screenSize.width*0.8: screenSize.width*2,
+                          height: screenSize.height * 0.4,
+
+                          child:LineChart(
+                            LineChartData(
+                              minX: 0,
+                              maxX: 25,
+                              minY: apValue.reduce(min)-3,
+                              maxY: apValue.reduce(max)+3,
+                              lineBarsData: [
+                                LineChartBarData(
+                                    spots: [
+                                      FlSpot(0, apValue[0]),
+                                      FlSpot(1, apValue[1]),
+                                      FlSpot(2, apValue[2]),
+                                      FlSpot(3, apValue[3]),
+                                      FlSpot(4, apValue[4]),
+                                      FlSpot(5, apValue[5]),
+                                      FlSpot(6, apValue[6]),
+                                      FlSpot(7, apValue[7]),
+                                      FlSpot(8, apValue[8]),
+                                      FlSpot(9, apValue[9]),
+                                      FlSpot(10, apValue[10]),
+                                      FlSpot(11, apValue[11]),
+                                      FlSpot(12, apValue[12]),
+                                      FlSpot(13, apValue[13]),
+                                      FlSpot(14, apValue[14]),
+                                      FlSpot(15, apValue[15]),
+                                      FlSpot(16, apValue[16]),
+                                      FlSpot(17, apValue[17]),
+                                      FlSpot(18, apValue[18]),
+                                      FlSpot(19, apValue[19]),
+                                      FlSpot(20, apValue[20]),
+                                      FlSpot(21, apValue[21]),
+                                      FlSpot(22, apValue[22]),
+                                      FlSpot(23, apValue[23]),
+                                    ]
+                                ),
+                              ],
+                              titlesData: FlTitlesData(
+                                  show: true,
+
+                                  topTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                          showTitles: false
+                                      )
+                                  ),
+
+                                  leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      getTitlesWidget: leftTitleWidgets,
+                                      reservedSize: 33,
+                                    ),
+                                  ),
+
+                                  bottomTitles: AxisTitles(
+                                    sideTitles : SideTitles(
+                                      showTitles: true,
+                                      getTitlesWidget: bottomTitleWidgets,
+                                    ),
+                                  )
+                              ),
+                            ) ,
+                          )
+                      ),
+                    ),
+
                     const Text('PM2.5(μg/m^3)',
                     style: TextStyle(
                       fontSize: 20,
@@ -626,9 +549,9 @@ class _GraphPageState extends State<GraphPage>{
                           child:LineChart(
                             LineChartData(
                               minX: 0,
-                              maxX: 23,
-                              minY: 0,
-                              maxY: 30,
+                              maxX: 24,
+                              minY: dustValue.reduce(min)-0.2,
+                              maxY: dustValue.reduce(max)+0.2,
                               lineBarsData: [
                                 LineChartBarData(
                                     spots: [
@@ -673,6 +596,7 @@ class _GraphPageState extends State<GraphPage>{
                                     sideTitles: SideTitles(
                                       showTitles: true,
                                       getTitlesWidget: leftTitleWidgets,
+                                      reservedSize: 33,
                                     ),
                                   ),
 
@@ -687,6 +611,8 @@ class _GraphPageState extends State<GraphPage>{
                           )
                       ),
                     ),
+
+
 
                   // Row(
                   //   children:[
@@ -991,7 +917,7 @@ class _GraphPageState extends State<GraphPage>{
     text=x;
     return SideTitleWidget(
         axisSide: meta.axisSide,
-        child: Text(text, style:  style2),);
+        child: Text(text,softWrap: false, style:  style2),);
   }
 
   Widget DliftTitleWidgets(double value, TitleMeta meta) {

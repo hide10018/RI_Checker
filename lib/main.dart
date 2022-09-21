@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:transport_predict_app/graph_page.dart';
 import 'package:transport_predict_app/data_page.dart';
 import 'firebase_options.dart';

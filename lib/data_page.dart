@@ -23,6 +23,7 @@ class _data_page extends State<data_page>{
           .get();
       final dustsnapshot = await ref.child('dust/now')
           .get();
+      final ap_snapshot = await ref.child('ap/now').get();
 
       if (tmpsnapshot.exists) {
         print(tmpsnapshot
@@ -43,6 +44,10 @@ class _data_page extends State<data_page>{
 
           var du = d.toStringAsFixed(3);
 
+          var a = ap_snapshot.child("now").value as double;
+          var ap = a.toStringAsFixed(3);
+
+          apr = double.parse(ap);
           dust = double.parse(du);
           print(dust);
         });
@@ -57,6 +62,8 @@ class _data_page extends State<data_page>{
   Object? tmp = '-'; //ここに温度
   late Object? hum = '-'; //ここに湿度
   Object? dust = '-';
+  Object? apr = '-';
+
 
 
 
@@ -83,28 +90,32 @@ class _data_page extends State<data_page>{
               .get();
           final dustsnapshot = await ref.child('dust/now')
               .get();
+          final ap_snapshot = await ref.child('ap/now').get();
 
           if (tmpsnapshot.exists) {
             print(tmpsnapshot
                 .child('tag1')
                 .value);
             setState(() {
-              tmp = tmpsnapshot
-                  .child('tag1')
-                  .value;
+                tmp = tmpsnapshot
+                    .child('tag1')
+                    .value;
+                hum = humsnapshot
+                    .child('tag1')
+                    .value;
 
-              hum = humsnapshot
-                  .child('tag1')
-                  .value;
+                var d = dustsnapshot
+                    .child('tag1')
+                    .value as double;
 
-              var d = dustsnapshot
-                  .child('tag1')
-                  .value as double;
+                var du = d.toStringAsFixed(3);
 
-              var du = d.toStringAsFixed(3);
+                var a = ap_snapshot.child("now").value as double;
+                var ap = a.toStringAsFixed(3);
 
-              dust = double.parse(du);
-              print(dust);
+                apr = double.parse(ap);
+                dust = double.parse(du);
+                print(dust);
             });
           } else {
             print('No data available.');
@@ -230,6 +241,51 @@ class _data_page extends State<data_page>{
                       ),
                     ],
                   ),
+
+                  Row(
+                    children: [
+                      SizedBox(
+                          width: screenSize.width * 0.5,
+                          height: 300,
+                          child: Center(
+                            child: Image.asset(
+                              'assets/ifn0112.png', color: Colors.lightBlueAccent,)
+                          )
+                        // if (tmp>30) {
+                        //   Colors.lightBlueAccent
+                        // }else{
+                        // }.lightBlueAccent,),
+                      ),
+
+                      Container(
+                        width: screenSize.width * 0.5,
+                        height: 300,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Air pressure',
+                                style: TextStyle(
+                                    fontSize: 30,
+                                    color: Colors.blueGrey
+                                ),
+                              ),
+
+                              Text(
+                                '$apr hPa',
+                                style: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'ds_digital',
+                                    color: Colors.blueGrey
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+
                   Row(
                     children: [
                       Container(
@@ -271,9 +327,7 @@ class _data_page extends State<data_page>{
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 100,
-                  ),
+
 
                   // Stack(
                   // children:[
