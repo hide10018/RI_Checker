@@ -1,0 +1,19 @@
+{
+  "@@locale":"en",
+  "title":"Now Data",
+  "message": "You have pushed the button this many times:",
+  "charts_title":"Charts",
+  "settings_title":  "Settings",
+  "temperature2":  "Temperature(℃)",
+  "humidity2":  "Humidity(%)",
+  "air_pressure2":  "Air pressure(hPa)",
+  "temperature":  "Temperature",
+  "humidity":  "Humidity",
+  "air_pressure":  "Air pressure",
+  "settings":"Settings",
+  "language":"Language",
+  "dark_mode":"Dark Mode",
+  "get_data":"Get Data",
+  "english":"English",
+  "japanese":"Japanese"
+}

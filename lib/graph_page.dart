@@ -4,6 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:transport_predict_app/main.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 List<double> tempValue = List<double>.generate(24, (i)=>0);
 
@@ -27,29 +30,32 @@ double_cast(data, list){
 
 
 
-class NextPage extends StatelessWidget {
-  const NextPage({Key? key}) : super(key: key);
-
-
-  @override
-    Widget build(BuildContext context) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
-          ),
-
-        home: GraphPage(title:'グラフ'),
-          // color: Colors.white,
-        );
-    }
-
-}
+// class NextPage extends StatelessWidget {
+//   const NextPage({Key? key}) : super(key: key);
+//
+//
+//   @override
+//     Widget build(BuildContext context) {
+//       return ChangeNotifierProvider(
+//           create: (_) => MyTheme(),
+//           child: Consumer<MyTheme>(
+//           builder: (context, theme, _) {
+//       return MaterialApp(
+//           debugShowCheckedModeBanner: false,
+//           title: 'Flutter Demo',
+//           theme: theme.current,
+//           darkTheme: ThemeData.dark(),
+//
+//
+//         home: GraphPage(title:'グラフ'),
+//           // color: Colors.white,
+//       );
+//           }));
+//   }
+// }
 
 class GraphPage extends StatefulWidget {
-  const GraphPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const GraphPage({Key? key}) : super(key: key);
 
 
 
@@ -266,16 +272,18 @@ class _GraphPageState extends State<GraphPage>{
             });
             print(tempValue);
             print("humValue");
-        }, label: Text('データ取得'),
+        }, label: Text(AppLocalizations.of(context).get_data),
         icon: Icon(Icons.download),
 
       ),
-      backgroundColor: Colors.black,
+      // backgroundColor:
 
       appBar: AppBar(
 
-        title: Text(widget.title),
-      ),
+        title: Text(AppLocalizations.of(context).charts_title,
+          style: TextStyle(color: Theme.of(context).disabledColor)),
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
       body:
           SingleChildScrollView(
             child:
@@ -290,7 +298,7 @@ class _GraphPageState extends State<GraphPage>{
                     height: 0,
                 ),
 
-                  const Text("Temperature(℃)",
+                  Text(AppLocalizations.of(context).temperature2,
                     style: TextStyle(
                     fontSize: 20,
                     color: Colors.lightBlueAccent
@@ -351,6 +359,12 @@ class _GraphPageState extends State<GraphPage>{
                                   )
                               ),
 
+                              rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                      showTitles: false
+                                  )
+                              ),
+
                               leftTitles: AxisTitles(
                                 sideTitles: SideTitles(
                                   showTitles: true,
@@ -371,7 +385,7 @@ class _GraphPageState extends State<GraphPage>{
                   ),
                 ),
 
-                  const Text('Humidity(%)',
+                    Text(AppLocalizations.of(context).humidity2,
                     style: TextStyle(
                     fontSize: 20,
                     color: Colors.red,
@@ -431,6 +445,12 @@ class _GraphPageState extends State<GraphPage>{
                                   )
                                 ),
 
+                                rightTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                        showTitles: false
+                                    )
+                                ),
+
                                 leftTitles: AxisTitles(
                                   sideTitles: SideTitles(
                                     showTitles: true,
@@ -452,7 +472,7 @@ class _GraphPageState extends State<GraphPage>{
                     ),
                   ),
 
-                    const Text("Air pressure(hPa)",
+                    Text(AppLocalizations.of(context).air_pressure2,
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.greenAccent
@@ -512,6 +532,12 @@ class _GraphPageState extends State<GraphPage>{
                                       )
                                   ),
 
+                                  rightTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                          showTitles: false
+                                      )
+                                  ),
+
                                   leftTitles: AxisTitles(
                                     sideTitles: SideTitles(
                                       showTitles: true,
@@ -532,10 +558,10 @@ class _GraphPageState extends State<GraphPage>{
                       ),
                     ),
 
-                    const Text('PM2.5(μg/m^3)',
+                    Text('PM2.5(μg/m^3)',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Colors.white
+                      color: Theme.of(context).primaryColor
                     ),),
 
                 SingleChildScrollView(//dust chart
@@ -587,6 +613,12 @@ class _GraphPageState extends State<GraphPage>{
                                   show: true,
 
                                   topTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                          showTitles: false
+                                      )
+                                  ),
+
+                                  rightTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                           showTitles: false
                                       )
@@ -812,9 +844,9 @@ class _GraphPageState extends State<GraphPage>{
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
+      var style = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey,
+      color: Theme.of(context).primaryColor,
       fontFamily: 'Digital',
       fontSize: 10,
     );
@@ -905,9 +937,9 @@ class _GraphPageState extends State<GraphPage>{
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style2 = TextStyle(
+    var style2 = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey,
+      color: Theme.of(context).primaryColor,
       fontFamily: 'Digital',
       fontSize: 10,
     );
@@ -921,9 +953,9 @@ class _GraphPageState extends State<GraphPage>{
   }
 
   Widget DliftTitleWidgets(double value, TitleMeta meta) {
-    const style2 = TextStyle(
+    var style2 = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey,
+      color: Theme.of(context).primaryColor,
       fontFamily: 'Digital',
       fontSize: 9,
     );

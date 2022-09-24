@@ -1,6 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:transport_predict_app/main.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transport_predict_app/setting_page.dart';
+
+bool b = false;
 
 class data_page extends StatefulWidget{
   const data_page({Key? key}) : super(key: key);
@@ -9,9 +16,35 @@ class data_page extends StatefulWidget{
 }
 
 class _data_page extends State<data_page>{
+
+  _getPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      b = prefs.getBool('dark_mode') ?? false;
+      switch_value = b;
+      Provider.of<MyTheme>(context, listen: false).test();
+
+    });
+  }
+
+  _getlanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      lang = prefs.getString('language') ?? 'en';
+      Provider.of<Local_Change>(context,listen: false).changeLocale(Local_Change.first(lang));
+    });
+  }
+
   @override
   void initState(){
     Future(() async {
+      print(lang);
+
+      _getPrefItems();
+      _getlanguage();
+      print(b);
+      print(lang);
+
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp();
       final ref = FirebaseDatabase.instance.ref();
@@ -75,6 +108,7 @@ class _data_page extends State<data_page>{
     var date_h = date.hour;
 
     return Scaffold(
+
       floatingActionButton: FloatingActionButton.extended(
         // child: Icon(Icons.download),
         //   backgroundColor: Colors.blue,
@@ -120,17 +154,20 @@ class _data_page extends State<data_page>{
           } else {
             print('No data available.');
           }
-        }, label: Text('データ取得'),
+        }, label: Text(AppLocalizations.of(context).get_data),
         icon: Icon(Icons.download),
 
       ),
 
-
-      backgroundColor: Colors.black,
+      //
+      // backgroundColor: Colors.black,
 
 
       appBar: AppBar(
-        title: const Text('Now Data'),
+
+        title: Text(AppLocalizations.of(context).title,
+          style: TextStyle(color: Theme.of(context).disabledColor)),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body:
 
@@ -174,19 +211,19 @@ class _data_page extends State<data_page>{
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text('temperature',
+                                  Text(AppLocalizations.of(context).temperature,
                                     style: TextStyle(
                                         fontSize: 30,
-                                        color: Colors.blueGrey
+                                        color: Theme.of(context).primaryColor,
                                     ),
                                   ),
 
                                   Text(
                                     '$tmp℃',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 50,
                                         fontFamily: 'ds_digital',
-                                        color: Colors.blueGrey
+                                        color: Theme.of(context).primaryColor
                                     ),
                                   ),
                                 ],
@@ -218,19 +255,19 @@ class _data_page extends State<data_page>{
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children:[
-                                  const Text('humidity',
+                                  Text(AppLocalizations.of(context).humidity,
                                     style: TextStyle(
                                         fontSize: 30,
-                                        color: Colors.blueGrey
+                                        color: Theme.of(context).primaryColor
                                     ),
                                   ),
 
                                   Text(
                                     '$hum%',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 50,
                                         fontFamily: 'ds_digital',
-                                        color: Colors.blueGrey
+                                        color: Theme.of(context).primaryColor
                                     ),
                                   ),
                                 ],
@@ -264,19 +301,19 @@ class _data_page extends State<data_page>{
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text('Air pressure',
+                              Text(AppLocalizations.of(context).air_pressure,
                                 style: TextStyle(
                                     fontSize: 30,
-                                    color: Colors.blueGrey
+                                    color: Theme.of(context).primaryColor
                                 ),
                               ),
 
                               Text(
                                 '$apr hPa',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 30,
                                     fontFamily: 'ds_digital',
-                                    color: Colors.blueGrey
+                                    color: Theme.of(context).primaryColor
                                 ),
                               ),
                             ],
@@ -306,19 +343,19 @@ class _data_page extends State<data_page>{
                             mainAxisSize: MainAxisSize.min,
                             children: [
 
-                              const Text('PM2.5',
+                              Text('PM2.5',
                                 style: TextStyle(
                                     fontSize: 30,
-                                    color: Colors.blueGrey
+                                    color: Theme.of(context).primaryColor
                                 ),
                               ),
 
                               Text(
                                 '$dust μg/m^3',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 30,
                                     fontFamily: "ds_digital",
-                                    color: Colors.blueGrey
+                                    color: Theme.of(context).primaryColor
                                 ),
                               ),
                             ],

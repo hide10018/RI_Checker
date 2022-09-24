@@ -1,0 +1,19 @@
+{
+  "@@locale":"ja",
+  "title":"現在のデータ",
+  "message": "You have pushed the button this many times:",
+  "charts_title":"グラフ",
+  "settings_title":  "設定",
+  "temperature2":  "室温(℃)",
+  "humidity2":  "湿度(%)",
+  "air_pressure2":  "気圧(hPa)",
+  "temperature":  "室温",
+  "humidity":  "湿度",
+  "air_pressure":  "気圧",
+  "settings":"設定",
+  "language":"言語",
+  "dark_mode":"ダークモード",
+  "get_data":"データ取得",
+  "english":"英語",
+  "japanese":"日本語"
+}
