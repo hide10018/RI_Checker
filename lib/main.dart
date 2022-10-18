@@ -1,91 +1,103 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:transport_predict_app/graph_page.dart';
 import 'package:transport_predict_app/data_page.dart';
-import 'package:transport_predict_app/language_change.dart';
 import 'package:transport_predict_app/setting_page.dart';
-import 'package:transport_predict_app/data_page.dart';
+import 'package:transport_predict_app/outlier_page.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// String locale = ("ja");
-bool a = false;
-String lang = 'en';
+final List<Icon> theme1list = [//テーマ変更用リスト
+  Icon(Icons.home),
+  Icon(Icons.show_chart),
+  Icon(Icons.check),
+  Icon(Icons.settings)
+];
+final List<Icon> theme2list = [
+  Icon(Icons.home),
+  Icon(Icons.show_chart),
+  Icon(Icons.check),
+  Icon(Icons.settings)
+];
+final List<ImageIcon> theme3list = [
+  ImageIcon(
+    AssetImage('assets/icon-2.png'),
+    size: 40,
+  ),
+  ImageIcon(
+    AssetImage('assets/icon-5.png'),
+    size: 40,
+  ),
+  ImageIcon(
+    AssetImage('assets/icon-1.png'),
+    size: 40,
+  ),
+  ImageIcon(
+    AssetImage('assets/icon-3.png'),
+    size: 40,
+  ),
+];
+final List<ImageIcon> theme4list = [
+  ImageIcon(AssetImage('assets/earth.png')),
+  ImageIcon(AssetImage('assets/1846.png')),
+  ImageIcon(AssetImage('assets/meteor.png')),
+  ImageIcon(AssetImage('assets/38123.png'))
+];
 
-class MyTheme extends ChangeNotifier {//ダークモード用provider
-  _setPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('dark_mode', _isDark);
-  }
+final List<Icon> theme1list_active = [
+  Icon(Icons.home),
+  Icon(Icons.show_chart),
+  Icon(Icons.check),
+  Icon(Icons.settings)
+];
+final List<Icon> theme2list_active = [
+  Icon(Icons.home),
+  Icon(Icons.show_chart),
+  Icon(Icons.check),
+  Icon(Icons.settings)
+];
+final List<ImageIcon> theme3list_active = [
+  MyImageIcon(AssetImage('assets/icon-2.png')),
+  MyImageIcon(AssetImage('assets/icon-5.png')),
+  MyImageIcon(AssetImage('assets/icon-1.png')),
+  MyImageIcon(AssetImage('assets/icon-3.png')),
+];
+final List<ImageIcon> theme4list_active = [
+  ImageIcon(
+    AssetImage('assets/earth.png'),
+    size: 30,
+    color: Colors.lightBlueAccent,
+  ),
+  ImageIcon(
+    AssetImage('assets/1846.png'),
+    size: 30,
+    color: Colors.lightBlueAccent,
+  ),
+  ImageIcon(
+    AssetImage('assets/meteor.png'),
+    size: 30,
+    color: Colors.lightBlueAccent,
+  ),
+  ImageIcon(
+    AssetImage('assets/38123.png'),
+    size: 30,
+    color: Colors.lightBlueAccent,
+  )
+];
 
-  ThemeData current = ThemeData.light().copyWith(
-      primaryColor: Colors.black87,
-      disabledColor: Colors.white);
-  bool _isDark = false;
-
-  toggle() {
-    _isDark = !_isDark;
-    current = _isDark ? ThemeData.dark().copyWith(
-      primaryColor: Colors.white,
-      disabledColor: Colors.black87,
-
-    ) : ThemeData.light().copyWith(
-      primaryColor: Colors.black87,
-      disabledColor: Colors.white,
-    );
-    notifyListeners();
-    _setPrefItems();
-    return _isDark;
-  }
-
-  test() {
-    _isDark = b;
-    current = _isDark ? ThemeData.dark().copyWith(
-      primaryColor: Colors.white,
-      disabledColor: Colors.black87,
-
-    ) : ThemeData.light().copyWith(
-      primaryColor: Colors.black87,
-      disabledColor: Colors.white,
-    );
-    notifyListeners();
-    _setPrefItems();
-  }
-}
-
-class Local_Change extends ChangeNotifier{
-  Locale _locale;
-  Local_Change(this._locale);
-
-  factory Local_Change.first(lang)=>//設定値を読み込む用
-      Local_Change(Locale(lang));
-
-  factory Local_Change.jp()=>
-      Local_Change(Locale('ja'));
-
-
-  factory Local_Change.en()=>
-      Local_Change(Locale('en'));
-
-  void changeLocale(Local_Change state){
-    _locale=state.locale;
-    lang = _locale.toLanguageTag();
-
-    _setPrefItems() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('language', lang);
-    }
-
-    _setPrefItems();
-    notifyListeners();
-  }
-
-
-  Locale get locale => _locale;
-}
+final List<List<Widget>> themelist = [
+  theme1list,
+  theme2list,
+  theme3list,
+  theme4list
+];
+final List<List<Widget>> themelist_active = [
+  theme1list_active,
+  theme2list_active,
+  theme3list_active,
+  theme4list_active
+];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,82 +105,110 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-      return MultiProvider(providers: [
-        ChangeNotifierProvider(create: (_) => MyTheme()),
-        ChangeNotifierProvider(create: (_) => Local_Change.jp())
-      ],child: Consumer2<MyTheme, Local_Change>(builder: (_, theme, localState,__)
-{
-
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              theme: theme.current,
-              darkTheme: theme.current,
-              home: const MyHomePage(title: '現在のデータ'),
-              locale: localState.locale,
-
-            );
-          })
-          );
-}
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-
-  final String title;
+class MyApp extends ConsumerWidget {
+  MyApp({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    final darkmode = ref.watch(darkmodeProvider);
+
+    return MaterialApp(
+      title: 'test',
+      theme: darkmode,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // BottomNavigationBarを実装したアプリのbaseとなるviewを利用
+      home: BaseTabView(),
+      locale: Locale(locale),
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+//riverpod
+final baseTabViewProvider = StateProvider<ViewType>((ref) => ViewType.home);
+final localeProvider = StateProvider<String>((ref) => 'ja');
+final darkmodeProvider = StateProvider((ref) => ThemeData.light()
+    .copyWith(primaryColor: Colors.black87, disabledColor: Colors.white));
+final themechangeProvider = StateProvider((ref) => 0);
+final layoutProvider = StateProvider<bool>((ref) => false);
 
-  static const _screens = [
-    data_page(),
+
+enum ViewType { home, charts, outlier, settings }
+
+class BaseTabView extends ConsumerWidget {
+  BaseTabView({Key? key}) : super(key: key);
+
+  final widgets = [
+    Data_page(),
     GraphPage(),
+    OutlierPage(),
     SettingsPage(),
   ];
 
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final view = ref.watch(baseTabViewProvider.state);
+    final theme_index = ref.watch(themechangeProvider);
+    return Scaffold(
+      body: widgets[view.state.index],
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              icon: SizedBox(width: 50, child: themelist[theme_index][0]),
+              activeIcon:
+                  SizedBox(width: 50, child: themelist_active[theme_index][0]),
+              label: AppLocalizations.of(context).home),
+          BottomNavigationBarItem(
+              icon: SizedBox(width: 50, child: themelist[theme_index][1]),
+              activeIcon:
+                  SizedBox(width: 50, child: themelist_active[theme_index][1]),
+              label: AppLocalizations.of(context).charts_title),
+          BottomNavigationBarItem(
+              icon: SizedBox(width: 50, child: themelist[theme_index][2]),
+              activeIcon:
+                  SizedBox(width: 50, child: themelist_active[theme_index][2]),
+              label: AppLocalizations.of(context).outlier),
+          BottomNavigationBarItem(
+              icon: SizedBox(width: 50, child: themelist[theme_index][3]),
+              activeIcon:
+                  SizedBox(width: 50, child: themelist_active[theme_index][3]),
+              label: AppLocalizations.of(context).settings),
+        ],
+        currentIndex: view.state.index,
+        onTap: (int index) => view.update((state) => ViewType.values[index]),
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
   }
+}
+
+class MyImageIcon extends ImageIcon {
+  const MyImageIcon(
+    ImageProvider image, {
+    Key? key,
+    double? size,
+    Color? color,
+    String? semanticLabel,
+  }) : super(image,
+            key: key, size: size, color: color, semanticLabel: semanticLabel);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          unselectedItemColor: Theme.of(context).disabledColor,
-          backgroundColor: Theme.of(context).primaryColor,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Charts'),
-            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-          ],
-          type: BottomNavigationBarType.fixed,
-        ));
+    return Semantics(
+      label: semanticLabel,
+      child: Image(
+        image: image as ImageProvider,
+        width: size,
+        height: size,
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.center,
+        excludeFromSemantics: true,
+        // color属性は設定しない
+      ),
+    );
   }
-
 }

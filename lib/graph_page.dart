@@ -1,99 +1,71 @@
 import 'dart:math';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:transport_predict_app/data_page.dart';
 import 'package:transport_predict_app/main.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:transport_predict_app/setting_page.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-List<double> tempValue = List<double>.generate(24, (i)=>0);
 
-List<double> humValue = List<double>.generate(24, (i)=>20);
+List<double> tempValue = List<double>.generate(24, (i) => 0); //グラフデータ初期値0埋め
 
-List<double> dustValue = List<double>.generate(24, (i)=>0);
+List<double> humValue = List<double>.generate(24, (i) => 20);
 
-List<double> apValue = List<double>.generate(24, (i)=>970);
+List<double> dustValue = List<double>.generate(24, (i) => 0);
 
-double_cast(data, list){
+List<double> apValue = List<double>.generate(24, (i) => 970);
 
+double_cast(data, list) {
   var x = double.parse("${data}");
 
   list.add(x);
 }
 
-//
-// class LineChartWidget extends StatelessWidget{
-//
-// }
-
-
-
-// class NextPage extends StatelessWidget {
-//   const NextPage({Key? key}) : super(key: key);
-//
-//
-//   @override
-//     Widget build(BuildContext context) {
-//       return ChangeNotifierProvider(
-//           create: (_) => MyTheme(),
-//           child: Consumer<MyTheme>(
-//           builder: (context, theme, _) {
-//       return MaterialApp(
-//           debugShowCheckedModeBanner: false,
-//           title: 'Flutter Demo',
-//           theme: theme.current,
-//           darkTheme: ThemeData.dark(),
-//
-//
-//         home: GraphPage(title:'グラフ'),
-//           // color: Colors.white,
-//       );
-//           }));
-//   }
-// }
-
-class GraphPage extends StatefulWidget {
+class GraphPage extends ConsumerStatefulWidget {
   const GraphPage({Key? key}) : super(key: key);
 
 
-
-
   @override
-  State<GraphPage> createState() => _GraphPageState();
+  _GraphPageState createState() => _GraphPageState();
 
 }
 
-// class Chart extends WidgetsFlutterBinding{
-//   void getdata() async {
-//     WidgetsFlutterBinding.ensureInitialized();
-//     await Firebase.initializeApp();
-//     final ref = FirebaseDatabase.instance.ref();
-//
-//     final onedaytmp = await ref.child('weather/temperature').get();
-//     final onedayhum = await ref.child('weather/humidity/now').get();
-//
-//     var daytmp = onedaytmp.child('temperature').key;
-//     return print(daytmp);}
-//   Chart.getdata();
-//
-//
-// }
+class _GraphPageState extends ConsumerState<GraphPage> {
 
-class _GraphPageState extends State<GraphPage>{
-
-
+  void showProgressDialog() {
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        transitionDuration: const Duration(milliseconds: 400),
+        barrierColor: Colors.black.withOpacity(0.5),
+        pageBuilder: (BuildContext context, Animation animation,
+            Animation secondaryAnimation) {
+          return Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(  //この部分
+              color: Colors.white,
+              size: 100
+            ),
+          );
+        });
+  }
 
 
   final List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a)
   ];
+
   @override
   void initState() {
     super.initState();
     Future(() async {
+      showProgressDialog();
+      await Future.delayed(Duration(seconds: 1.toInt()));
+      Navigator.of(context).pop();
       WidgetsFlutterBinding.ensureInitialized();
       await Firebase.initializeApp();
       final ref = FirebaseDatabase.instance.ref();
@@ -123,156 +95,146 @@ class _GraphPageState extends State<GraphPage>{
         print(tempValue);
 
 
-          for (var i = date.hour; i >= 0; i--) {
-            // print(onedaytmp
-            //     .child("${i}")
-            //     .key);
-            double_cast(onedaytmp.child("${i}").value as int, tempValue);
+        for (var i = date.hour; i >= 0; i--) {
+          // print(onedaytmp
+          //     .child("${i}")
+          //     .key);
+          double_cast(onedaytmp
+              .child("${i}")
+              .value as int, tempValue);
 
-            double_cast(onedayhum.child("${i}").value as int, humValue);
+          double_cast(onedayhum
+              .child("${i}")
+              .value as int, humValue);
 
-            double_cast(onedaydust.child("${i}").value as double, dustValue);
+          double_cast(onedaydust
+              .child("${i}")
+              .value as double, dustValue);
 
-            double_cast(onedayap.child("${i}").value as double, apValue);
+          double_cast(onedayap
+              .child("${i}")
+              .value as double, apValue);
+        }
 
-          }
+        for (var i = 23; i > date.hour; i--) {
+          // print(onedaytmp
+          //     .child("${i}")
+          //     .key);
+          double_cast(onedaytmp
+              .child("${i}")
+              .value as int, tempValue);
 
-          for (var i = 23; i > date.hour; i--) {
-            // print(onedaytmp
-            //     .child("${i}")
-            //     .key);
-            double_cast(onedaytmp.child("${i}").value as int, tempValue);
+          double_cast(onedayhum
+              .child("${i}")
+              .value as int, humValue);
 
-            double_cast(onedayhum.child("${i}").value as int, humValue);
+          double_cast(onedaydust
+              .child("${i}")
+              .value as double, dustValue);
 
-            double_cast(onedaydust.child("${i}").value as double, dustValue);
-
-            double_cast(onedayap.child("${i}").value as double, apValue);
-
-          }
+          double_cast(onedayap
+              .child("${i}")
+              .value as double, apValue);
+        }
 
         print("a");
         print(tempValue);
-
-
-
-
-
-// List<Object?> tempKey = <Object?>[];
-// final List<Object?> tempValue = <Object?>[];
-
-
-// final daytmp = onedaytmp.child;
-//         if (onedaytmp.exists) {
-//           for (var i = 0; i <= 23; i++) {
-//             // print(onedaytmp
-//             //     .child("${i}")
-//             //     .key);
-//
-//             var y = onedaytmp
-//                 .child("${i}")
-//                 .value as int;
-//
-//             var yy = double.parse("${y}");
-//
-//
-//             tempValue.add(yy);
-//
-//
-//             print(onedaytmp
-//                 .child("$i")
-//                 .value);
-//             print("test");
-//           }
-//
-//           print(tempValue);
-//         }
       });
     });
   }
+
   var screenSize = MediaQuery;
-  final test = "" ;
-  // List<double> tempKey = List(23);
-  // List<double> tempValue = List(23);
-
-
+  final test = "";
 
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+    var screenSize = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
 
       floatingActionButton: FloatingActionButton.extended(
-        // child: Icon(Icons.download),
-        //   backgroundColor: Colors.blue,
-          onPressed: () async {
-            WidgetsFlutterBinding.ensureInitialized();
-            await Firebase.initializeApp();
-            final ref = FirebaseDatabase.instance.ref();
+        onPressed: () async {
+          showProgressDialog();
+          await Future.delayed(Duration(seconds: 1.toInt()));
+          Navigator.of(context).pop();
+          WidgetsFlutterBinding.ensureInitialized();
+          await Firebase.initializeApp();
+          final ref = FirebaseDatabase.instance.ref();
 
-            final onedaytmp = await ref.child(
-                'weather/temperature/onedaytmp').get();
-            final onedayhum = await ref.child(
-                'weather/humidity/onedayhum').get();
-            final onedaydust = await ref.child('dust/onedaydust').get();
+          final onedaytmp = await ref.child(
+              'weather/temperature/onedaytmp').get();
+          final onedayhum = await ref.child(
+              'weather/humidity/onedayhum').get();
+          final onedaydust = await ref.child('dust/onedaydust').get();
 
-            final onedayap = await ref.child('ap/onedayap').get();
-
-
-            setState(() {
-              print("tempValue");
-              print(tempValue);
-              tempValue.clear();
-
-              humValue.clear();
-
-              dustValue.clear();
-
-              apValue.clear();
-
-              // List<Object?> tempKey = <Object?>[];
-              // final List<Object?> tempValue = <Object?>[];
+          final onedayap = await ref.child('ap/onedayap').get();
 
 
-              // final daytmp = onedaytmp.child;
-              var date = DateTime.now();
+          setState(() {
+            print("tempValue");
+            print(tempValue);
+            tempValue.clear();
 
-              if (onedaytmp.exists) {
-                for (var i = date.hour; i >= 0; i--) {
-                  // print(onedaytmp
-                  //     .child("${i}")
-                  //     .key);
-                  double_cast(onedaytmp.child("${i}").value as int, tempValue);
+            humValue.clear();
 
-                  double_cast(onedayhum.child("${i}").value as int, humValue);
+            dustValue.clear();
 
-                  double_cast(onedaydust.child("${i}").value as double, dustValue);
+            apValue.clear();
+            var date = DateTime.now();
 
-                  double_cast(onedayap.child("${i}").value as double, apValue);
+            if (onedaytmp.exists) {
+              for (var i = date.hour; i >= 0; i--) {
+                // print(onedaytmp
+                //     .child("${i}")
+                //     .key);
+                double_cast(onedaytmp
+                    .child("${i}")
+                    .value as int, tempValue);
+
+                double_cast(onedayhum
+                    .child("${i}")
+                    .value as int, humValue);
+
+                double_cast(onedaydust
+                    .child("${i}")
+                    .value as double, dustValue);
+
+                double_cast(onedayap
+                    .child("${i}")
+                    .value as double, apValue);
 
 
-                  print(apValue);
-                  print("test");
-                }
-
-                for (var i = 23; i > date.hour; i--) {
-                  // print(onedaytmp
-                  //     .child("${i}")
-                  //     .key);
-                  double_cast(onedaytmp.child("${i}").value as int, tempValue);
-
-                  double_cast(onedayhum.child("${i}").value as int, humValue);
-
-                  double_cast(onedaydust.child("${i}").value as double, dustValue);
-
-                  double_cast(onedayap.child("${i}").value as double, apValue);
-                }
-
+                print(apValue);
+                print("test");
               }
 
-            });
-            print(tempValue);
-            print("humValue");
-        }, label: Text(AppLocalizations.of(context).get_data),
+              for (var i = 23; i > date.hour; i--) {
+                // print(onedaytmp
+                //     .child("${i}")
+                //     .key);
+                double_cast(onedaytmp
+                    .child("${i}")
+                    .value as int, tempValue);
+
+                double_cast(onedayhum
+                    .child("${i}")
+                    .value as int, humValue);
+
+                double_cast(onedaydust
+                    .child("${i}")
+                    .value as double, dustValue);
+
+                double_cast(onedayap
+                    .child("${i}")
+                    .value as double, apValue);
+              }
+            }
+          });
+          print(tempValue);
+          print("humValue");
+        }, label: Text(AppLocalizations
+          .of(context)
+          .get_data),
         icon: Icon(Icons.download),
 
       ),
@@ -280,573 +242,435 @@ class _GraphPageState extends State<GraphPage>{
 
       appBar: AppBar(
 
-        title: Text(AppLocalizations.of(context).charts_title,
-          style: TextStyle(color: Theme.of(context).disabledColor)),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
+        title: Text(AppLocalizations
+            .of(context)
+            .charts_title,
+            style: TextStyle(color: Theme
+                .of(context)
+                .primaryColor)),
+        backgroundColor: Theme
+            .of(context)
+            .disabledColor,
+      ),
       body:
-          SingleChildScrollView(
-            child:
-                Column(
-                  children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Data_page.background_img(ref
+                  .read(themechangeProvider.notifier)
+                  .state),
+              colorFilter: ColorFilter.mode(
+                  switch_value ? Colors.white.withOpacity(0.6) : Colors.white
+                      .withOpacity(0.7), BlendMode.dstATop),
+              fit: BoxFit.cover,
+            )),
+        child: SingleChildScrollView(
+          child:
+          Column(
+            children: <Widget>[
+              SizedBox(
+                height: screenSize.height*0.05,
+              ),
 
-                  const Text(
-                  'inui toko',
-                ),
-
-                  const SizedBox(
-                    height: 0,
-                ),
-
-                  Text(AppLocalizations.of(context).temperature2,
-                    style: TextStyle(
+              Text(AppLocalizations
+                  .of(context)
+                  .temperature2,
+                style: TextStyle(
                     fontSize: 20,
                     color: Colors.lightBlueAccent
-                  ),
                 ),
+              ),
 
-                  SingleChildScrollView(//temp chart
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: screenSize.width >= 500? EdgeInsets.fromLTRB(screenSize.width*0.1, 50, 0, 50):const EdgeInsets.fromLTRB(0, 50, 0, 50),
-                      width: screenSize.width >= 500? screenSize.width*0.8: screenSize.width*2,
-                      height: screenSize.height * 0.4,
+              SingleChildScrollView( //temp chart
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    color: Theme
+                        .of(context)
+                        .disabledColor
+                        .withOpacity(0.5),
+                    padding: const EdgeInsets.all(10),
+                    margin: screenSize.width >= 500 ? EdgeInsets.fromLTRB(
+                        screenSize.width * 0, 50, 0, 50) : const EdgeInsets
+                        .fromLTRB(0, 50, 0, 50),
+                    width: screenSize.width >= 500
+                        ? screenSize.width * 1
+                        : screenSize.width * 2,
+                    height: screenSize.height * 0.4,
 
-                      child:LineChart(
+                    child: LineChart(
                       LineChartData(
-                          minX: 0,
-                          maxX: 25,
-                          minY: tempValue.reduce(min)-3,
-                          maxY: tempValue.reduce(max)+3,
-                          lineBarsData: [
-                            LineChartBarData(
-                                spots: [
-                                  FlSpot(0, tempValue[0]),
-                                  FlSpot(1, tempValue[1]),
-                                  FlSpot(2, tempValue[2]),
-                                  FlSpot(3, tempValue[3]),
-                                  FlSpot(4, tempValue[4]),
-                                  FlSpot(5, tempValue[5]),
-                                  FlSpot(6, tempValue[6]),
-                                  FlSpot(7, tempValue[7]),
-                                  FlSpot(8, tempValue[8]),
-                                  FlSpot(9, tempValue[9]),
-                                  FlSpot(10, tempValue[10]),
-                                  FlSpot(11, tempValue[11]),
-                                  FlSpot(12, tempValue[12]),
-                                  FlSpot(13, tempValue[13]),
-                                  FlSpot(14, tempValue[14]),
-                                  FlSpot(15, tempValue[15]),
-                                  FlSpot(16, tempValue[16]),
-                                  FlSpot(17, tempValue[17]),
-                                  FlSpot(18, tempValue[18]),
-                                  FlSpot(19, tempValue[19]),
-                                  FlSpot(20, tempValue[20]),
-                                  FlSpot(21, tempValue[21]),
-                                  FlSpot(22, tempValue[22]),
-                                  FlSpot(23, tempValue[23]),
+                        minX: 0,
+                        maxX: 25,
+                        minY: tempValue.reduce(min) - 3,
+                        maxY: tempValue.reduce(max) + 3,
+                        lineBarsData: [
+                          LineChartBarData(
+                              spots: [
+                                FlSpot(0, tempValue[0]),
+                                FlSpot(1, tempValue[1]),
+                                FlSpot(2, tempValue[2]),
+                                FlSpot(3, tempValue[3]),
+                                FlSpot(4, tempValue[4]),
+                                FlSpot(5, tempValue[5]),
+                                FlSpot(6, tempValue[6]),
+                                FlSpot(7, tempValue[7]),
+                                FlSpot(8, tempValue[8]),
+                                FlSpot(9, tempValue[9]),
+                                FlSpot(10, tempValue[10]),
+                                FlSpot(11, tempValue[11]),
+                                FlSpot(12, tempValue[12]),
+                                FlSpot(13, tempValue[13]),
+                                FlSpot(14, tempValue[14]),
+                                FlSpot(15, tempValue[15]),
+                                FlSpot(16, tempValue[16]),
+                                FlSpot(17, tempValue[17]),
+                                FlSpot(18, tempValue[18]),
+                                FlSpot(19, tempValue[19]),
+                                FlSpot(20, tempValue[20]),
+                                FlSpot(21, tempValue[21]),
+                                FlSpot(22, tempValue[22]),
+                                FlSpot(23, tempValue[23]),
                               ]
 
-                            ),
-                          ],
-                          titlesData: FlTitlesData(
+                          ),
+                        ],
+                        titlesData: FlTitlesData(
                             show: true,
 
-                              topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: false
-                                  )
-                              ),
-
-                              rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: false
-                                  )
-                              ),
-
-                              leftTitles: AxisTitles(
+                            topTitles: AxisTitles(
                                 sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: leftTitleWidgets,
-                                  reservedSize: 33,
-                                ),
-                              ),
-
-                            bottomTitles: AxisTitles(
-                              sideTitles : SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: bottomTitleWidgets,
-                              ),
-                            )
-                      ),
-                    ) ,
-                  )
-                  ),
-                ),
-
-                    Text(AppLocalizations.of(context).humidity2,
-                    style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.red,
-                  ),),
-
-                  SingleChildScrollView(//hum chart
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: screenSize.width >= 500? EdgeInsets.fromLTRB(screenSize.width*0.1, 50, 0, 100):const EdgeInsets.fromLTRB(0, 50, 0, 50),
-                        width: screenSize.width >= 500? screenSize.width*0.8: screenSize.width*2,
-                        height: screenSize.height * 0.4,
-
-                        child:LineChart(
-                          LineChartData(
-                            minX: 0,
-                            maxX: 25,
-                            minY: humValue.reduce(min)-7,
-                            maxY: humValue.reduce(max)+7,
-                            lineBarsData: [
-                              LineChartBarData(
-                                  spots: [
-                                    FlSpot(0, humValue[0]),
-                                    FlSpot(1, humValue[1]),
-                                    FlSpot(2, humValue[2]),
-                                    FlSpot(3, humValue[3]),
-                                    FlSpot(4, humValue[4]),
-                                    FlSpot(5, humValue[5]),
-                                    FlSpot(6, humValue[6]),
-                                    FlSpot(7, humValue[7]),
-                                    FlSpot(8, humValue[8]),
-                                    FlSpot(9, humValue[9]),
-                                    FlSpot(10, humValue[10]),
-                                    FlSpot(11, humValue[11]),
-                                    FlSpot(12, humValue[12]),
-                                    FlSpot(13, humValue[13]),
-                                    FlSpot(14, humValue[14]),
-                                    FlSpot(15, humValue[15]),
-                                    FlSpot(16, humValue[16]),
-                                    FlSpot(17, humValue[17]),
-                                    FlSpot(18, humValue[18]),
-                                    FlSpot(19, humValue[19]),
-                                    FlSpot(20, humValue[20]),
-                                    FlSpot(21, humValue[21]),
-                                    FlSpot(22, humValue[22]),
-                                    FlSpot(23, humValue[23]),
-                                  ]
-
-                              ),
-                            ],
-                            titlesData: FlTitlesData(
-                                show: true,
-
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
                                     showTitles: false
-                                  )
-                                ),
-
-                                rightTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                        showTitles: false
-                                    )
-                                ),
-
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: leftTitleWidgets,
-                                    reservedSize: 33,
-                                  ),
-                                ),
-
-
-                                bottomTitles: AxisTitles(
-                                  sideTitles : SideTitles(
-                                    showTitles: true,
-                                    getTitlesWidget: bottomTitleWidgets,
-                                  ),
                                 )
                             ),
-                          ) ,
-                        )
-                    ),
-                  ),
 
-                    Text(AppLocalizations.of(context).air_pressure2,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.greenAccent
-                      ),
-                    ),
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
 
-                    SingleChildScrollView(//temp chart
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: screenSize.width >= 500? EdgeInsets.fromLTRB(screenSize.width*0.1, 50, 0, 50):const EdgeInsets.fromLTRB(0, 50, 0, 50),
-                          width: screenSize.width >= 500? screenSize.width*0.8: screenSize.width*2,
-                          height: screenSize.height * 0.4,
-
-                          child:LineChart(
-                            LineChartData(
-                              minX: 0,
-                              maxX: 25,
-                              minY: apValue.reduce(min)-3,
-                              maxY: apValue.reduce(max)+3,
-                              lineBarsData: [
-                                LineChartBarData(
-                                    spots: [
-                                      FlSpot(0, apValue[0]),
-                                      FlSpot(1, apValue[1]),
-                                      FlSpot(2, apValue[2]),
-                                      FlSpot(3, apValue[3]),
-                                      FlSpot(4, apValue[4]),
-                                      FlSpot(5, apValue[5]),
-                                      FlSpot(6, apValue[6]),
-                                      FlSpot(7, apValue[7]),
-                                      FlSpot(8, apValue[8]),
-                                      FlSpot(9, apValue[9]),
-                                      FlSpot(10, apValue[10]),
-                                      FlSpot(11, apValue[11]),
-                                      FlSpot(12, apValue[12]),
-                                      FlSpot(13, apValue[13]),
-                                      FlSpot(14, apValue[14]),
-                                      FlSpot(15, apValue[15]),
-                                      FlSpot(16, apValue[16]),
-                                      FlSpot(17, apValue[17]),
-                                      FlSpot(18, apValue[18]),
-                                      FlSpot(19, apValue[19]),
-                                      FlSpot(20, apValue[20]),
-                                      FlSpot(21, apValue[21]),
-                                      FlSpot(22, apValue[22]),
-                                      FlSpot(23, apValue[23]),
-                                    ]
-                                ),
-                              ],
-                              titlesData: FlTitlesData(
-                                  show: true,
-
-                                  topTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                          showTitles: false
-                                      )
-                                  ),
-
-                                  rightTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                          showTitles: false
-                                      )
-                                  ),
-
-                                  leftTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: leftTitleWidgets,
-                                      reservedSize: 33,
-                                    ),
-                                  ),
-
-                                  bottomTitles: AxisTitles(
-                                    sideTitles : SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: bottomTitleWidgets,
-                                    ),
-                                  )
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: leftTitleWidgets,
+                                reservedSize: 33,
                               ),
-                            ) ,
-                          )
-                      ),
-                    ),
+                            ),
 
-                    Text('PM2.5(μg/m^3)',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).primaryColor
-                    ),),
-
-                SingleChildScrollView(//dust chart
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: screenSize.width >= 500? EdgeInsets.fromLTRB(screenSize.width*0.1, 50, 0, 50):const EdgeInsets.fromLTRB(0, 50, 0, 75),
-                          width: screenSize.width >= 500? screenSize.width*0.8: screenSize.width*2,
-                          height: screenSize.height * 0.4,
-
-                          child:LineChart(
-                            LineChartData(
-                              minX: 0,
-                              maxX: 24,
-                              minY: dustValue.reduce(min)-0.2,
-                              maxY: dustValue.reduce(max)+0.2,
-                              lineBarsData: [
-                                LineChartBarData(
-                                    spots: [
-                                      FlSpot(0, dustValue[0]),
-                                      FlSpot(1, dustValue[1]),
-                                      FlSpot(2, dustValue[2]),
-                                      FlSpot(3, dustValue[3]),
-                                      FlSpot(4, dustValue[4]),
-                                      FlSpot(5, dustValue[5]),
-                                      FlSpot(6, dustValue[6]),
-                                      FlSpot(7, dustValue[7]),
-                                      FlSpot(8, dustValue[8]),
-                                      FlSpot(9, dustValue[9]),
-                                      FlSpot(10, dustValue[10]),
-                                      FlSpot(11, dustValue[11]),
-                                      FlSpot(12, dustValue[12]),
-                                      FlSpot(13, dustValue[13]),
-                                      FlSpot(14, dustValue[14]),
-                                      FlSpot(15, dustValue[15]),
-                                      FlSpot(16, dustValue[16]),
-                                      FlSpot(17, dustValue[17]),
-                                      FlSpot(18, dustValue[18]),
-                                      FlSpot(19, dustValue[19]),
-                                      FlSpot(20, dustValue[20]),
-                                      FlSpot(21, dustValue[21]),
-                                      FlSpot(22, dustValue[22]),
-                                      FlSpot(23, dustValue[23]),
-                                    ]
-
-                                ),
-                              ],
-                              titlesData: FlTitlesData(
-                                  show: true,
-
-                                  topTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                          showTitles: false
-                                      )
-                                  ),
-
-                                  rightTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                          showTitles: false
-                                      )
-                                  ),
-
-                                  leftTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: leftTitleWidgets,
-                                      reservedSize: 33,
-                                    ),
-                                  ),
-
-                                  bottomTitles: AxisTitles(
-                                    sideTitles : SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: bottomTitleWidgets,
-                                    ),
-                                  )
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: bottomTitleWidgets,
                               ),
-                            ) ,
-                          )
+                            )
+                        ),
                       ),
-                    ),
-
-
-
-                  // Row(
-                  //   children:[
-                  //     SizedBox(
-                  //       width:  screenSize.width / 2,
-                  //       height: 50,
-                  //       child: ElevatedButton.icon(
-                  //         icon: const Icon(
-                  //           Icons.download,
-                  //           color: Colors.white,
-                  //         ),
-                  //         label: const Text('データ取得'),
-                  //         style: ElevatedButton.styleFrom(
-                  //           primary: Colors.green,
-                  //           onPrimary: Colors.white,
-                  //         ),
-                  //         onPressed: () async {
-                  //           WidgetsFlutterBinding.ensureInitialized();
-                  //           await Firebase.initializeApp();
-                  //           final ref = FirebaseDatabase.instance.ref();
-                  //
-                  //
-                  //           final onedaytmp = await ref.child(
-                  //               'weather/temperature/onedaytmp').get();
-                  //           final onedayhum = await ref.child(
-                  //               'weather/humidity/onedayhum').get();
-                  //           final onedaydust = await ref.child('dust/onedaydust').get();
-                  //
-                  //
-                  //           setState(() {
-                  //             tempKey.clear();
-                  //             tempValue.clear();
-                  //
-                  //             humKey.clear();
-                  //             humValue.clear();
-                  //
-                  //             dustKey.clear();
-                  //             dustValue.clear();
-                  //
-                  //
-                  //             // final daytmp = onedaytmp.child;
-                  //             if (onedaytmp.exists) {
-                  //               for (var i = 0; i <= 23; i++) {
-                  //                 print(onedaytmp
-                  //                     .child("${i}")
-                  //                     .key);
-                  //                 print(onedaytmp
-                  //                     .child("${i}")
-                  //                     .value);
-                  //               }
-                  //
-                  //
-                  //               //   setState(() {
-                  //               // tmp = tmpsnapshot
-                  //               //     .child('tag1')
-                  //               //     .value;
-                  //               // hum = humsnapshot
-                  //               //     .child('tag1')
-                  //               //     .value;
-                  //               // });
-                  //             } else {
-                  //               print('No data available.');
-                  //             }
-                  //
-                  //             // List<Object?> tempKey = <Object?>[];
-                  //             // final List<Object?> tempValue = <Object?>[];
-                  //
-                  //
-                  //             // final daytmp = onedaytmp.child;
-                  //             if (onedaytmp.exists) {
-                  //               for (var i = 0; i <= 24; i++) {
-                  //                 // print(onedaytmp
-                  //                 //     .child("${i}")
-                  //                 //     .key);
-                  //
-                  //                 var x = onedaytmp
-                  //                     .child("${i}")
-                  //                     .key as String;
-                  //
-                  //                 var y = onedaytmp
-                  //                     .child("${i}")
-                  //                     .value as int;
-                  //
-                  //                 var xx = double.parse(x);
-                  //                 var yy = double.parse("${y}");
-                  //
-                  //                 tempKey.add(xx);
-                  //
-                  //                 tempValue.add(yy);
-                  //
-                  //
-                  //                 var x2 = onedayhum
-                  //                     .child("${i}")
-                  //                     .key as String;
-                  //
-                  //                 var y2 = onedayhum
-                  //                     .child("${i}")
-                  //                     .value as int;
-                  //
-                  //                 var xx2 = double.parse(x2);
-                  //                 var yy2 = double.parse("${y2}");
-                  //
-                  //                 humKey.add(xx2);
-                  //
-                  //                 humValue.add(yy2);
-                  //
-                  //                 print(humKey);
-                  //
-                  //
-                  //                 var x3 = onedaydust
-                  //                     .child("${i}")
-                  //                     .key as String;
-                  //
-                  //                 var y3 = onedaydust
-                  //                     .child("${i}")
-                  //                     .value as double;
-                  //
-                  //                 var xx3 = double.parse(x3);
-                  //                 var yy3 = double.parse("${y3}");
-                  //
-                  //                 dustKey.add(xx3);
-                  //
-                  //                 dustValue.add(yy3);
-                  //
-                  //
-                  //                 print(onedaytmp
-                  //                     .child("$i")
-                  //                     .value);
-                  //                 print("test");
-                  //               }
-                  //
-                  //               print(tempKey);
-                  //               print(tempValue);
-                  //               print(humValue);
-                  //             }
-                  //           });
-                  //
-                  //         },
-                  //
-                  //
-                  //       ),
-                  //     ),
-                  //
-                  //     SizedBox(
-                  //       width: screenSize.width/2,
-                  //       height: 50,
-                  //       child: ElevatedButton.icon(
-                  //         icon: const Icon(
-                  //           Icons.home,
-                  //           color: Colors.white,
-                  //         ),
-                  //         label: const Text('Home'),
-                  //         style: ElevatedButton.styleFrom(
-                  //           primary: Colors.green,
-                  //           onPrimary: Colors.white,
-                  //         ),
-                  //         onPressed: () async {
-                  //           Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(builder: (context) => const MyApp()),
-                  //           );
-                  //         },
-                  //       ),
-                  //     ),
-                  //     ],
-                  // ),
-
-                  ],
-              ),
+                    )
+                ),
               ),
 
-          // bottomNavigationBar: BottomNavigationBar(
-          //   currentIndex: _selectedIndex,
-          //   onTap: _onItemTapped,
-          //   items: const[
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.home),
-          //       label:  'Home'
-          //
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.home),
-          //       label: 'Home'
-          //     ),
-          //     BottomNavigationBarItem(
-          //         icon: Icon(Icons.home),
-          //         label: 'Home'
-          //     ),
-          //   ],
-          // ),
+              Text(AppLocalizations
+                  .of(context)
+                  .humidity2,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.red,
+                ),),
+
+              SingleChildScrollView( //hum chart
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    color: Theme
+                        .of(context)
+                        .disabledColor
+                        .withOpacity(0.5),
+                    padding: const EdgeInsets.all(10),
+                    margin: screenSize.width >= 500 ? EdgeInsets.fromLTRB(
+                        screenSize.width * 0, 50, 0, 100) : const EdgeInsets
+                        .fromLTRB(0, 50, 0, 50),
+                    width: screenSize.width >= 500
+                        ? screenSize.width * 1
+                        : screenSize.width * 2,
+                    height: screenSize.height * 0.4,
+
+                    child: LineChart(
+                      LineChartData(
+                        minX: 0,
+                        maxX: 25,
+                        minY: humValue.reduce(min) - 7,
+                        maxY: humValue.reduce(max) + 7,
+                        lineBarsData: [
+                          LineChartBarData(
+                              spots: [
+                                FlSpot(0, humValue[0]),
+                                FlSpot(1, humValue[1]),
+                                FlSpot(2, humValue[2]),
+                                FlSpot(3, humValue[3]),
+                                FlSpot(4, humValue[4]),
+                                FlSpot(5, humValue[5]),
+                                FlSpot(6, humValue[6]),
+                                FlSpot(7, humValue[7]),
+                                FlSpot(8, humValue[8]),
+                                FlSpot(9, humValue[9]),
+                                FlSpot(10, humValue[10]),
+                                FlSpot(11, humValue[11]),
+                                FlSpot(12, humValue[12]),
+                                FlSpot(13, humValue[13]),
+                                FlSpot(14, humValue[14]),
+                                FlSpot(15, humValue[15]),
+                                FlSpot(16, humValue[16]),
+                                FlSpot(17, humValue[17]),
+                                FlSpot(18, humValue[18]),
+                                FlSpot(19, humValue[19]),
+                                FlSpot(20, humValue[20]),
+                                FlSpot(21, humValue[21]),
+                                FlSpot(22, humValue[22]),
+                                FlSpot(23, humValue[23]),
+                              ]
+
+                          ),
+                        ],
+                        titlesData: FlTitlesData(
+                            show: true,
+
+                            topTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: leftTitleWidgets,
+                                reservedSize: 33,
+                              ),
+                            ),
 
 
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: bottomTitleWidgets,
+                              ),
+                            )
+                        ),
+                      ),
+                    )
+                ),
+              ),
 
-          );
+              Text(AppLocalizations
+                  .of(context)
+                  .air_pressure2,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.greenAccent
+                ),
+              ),
 
+              SingleChildScrollView( //temp chart
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    color: Theme
+                        .of(context)
+                        .disabledColor
+                        .withOpacity(0.5),
+                    padding: const EdgeInsets.all(10),
+                    margin: screenSize.width >= 500 ? EdgeInsets.fromLTRB(
+                        screenSize.width * 0, 50, 0, 50) : const EdgeInsets
+                        .fromLTRB(0, 50, 0, 50),
+                    width: screenSize.width >= 500
+                        ? screenSize.width * 1
+                        : screenSize.width * 2,
+                    height: screenSize.height * 0.4,
 
+                    child: LineChart(
+                      LineChartData(
+                        minX: 0,
+                        maxX: 25,
+                        minY: apValue.reduce(min) - 3,
+                        maxY: apValue.reduce(max) + 3,
+                        lineBarsData: [
+                          LineChartBarData(
+                              spots: [
+                                FlSpot(0, apValue[0]),
+                                FlSpot(1, apValue[1]),
+                                FlSpot(2, apValue[2]),
+                                FlSpot(3, apValue[3]),
+                                FlSpot(4, apValue[4]),
+                                FlSpot(5, apValue[5]),
+                                FlSpot(6, apValue[6]),
+                                FlSpot(7, apValue[7]),
+                                FlSpot(8, apValue[8]),
+                                FlSpot(9, apValue[9]),
+                                FlSpot(10, apValue[10]),
+                                FlSpot(11, apValue[11]),
+                                FlSpot(12, apValue[12]),
+                                FlSpot(13, apValue[13]),
+                                FlSpot(14, apValue[14]),
+                                FlSpot(15, apValue[15]),
+                                FlSpot(16, apValue[16]),
+                                FlSpot(17, apValue[17]),
+                                FlSpot(18, apValue[18]),
+                                FlSpot(19, apValue[19]),
+                                FlSpot(20, apValue[20]),
+                                FlSpot(21, apValue[21]),
+                                FlSpot(22, apValue[22]),
+                                FlSpot(23, apValue[23]),
+                              ]
+                          ),
+                        ],
+                        titlesData: FlTitlesData(
+                            show: true,
+
+                            topTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: leftTitleWidgets,
+                                reservedSize: 33,
+                              ),
+                            ),
+
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: bottomTitleWidgets,
+                              ),
+                            )
+                        ),
+                      ),
+                    )
+                ),
+              ),
+
+              Text('PM2.5(μg/m^3)',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Theme
+                        .of(context)
+                        .primaryColor
+                ),),
+
+              SingleChildScrollView( //dust chart
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                    color: Theme
+                        .of(context)
+                        .disabledColor
+                        .withOpacity(0.5),
+                    padding: const EdgeInsets.all(10),
+                    margin: screenSize.width >= 500 ? EdgeInsets.fromLTRB(
+                        screenSize.width * 0, 50, 0, 50) : const EdgeInsets
+                        .fromLTRB(0, 50, 0, 75),
+                    width: screenSize.width >= 500
+                        ? screenSize.width * 1
+                        : screenSize.width * 2,
+                    height: screenSize.height * 0.4,
+
+                    child: LineChart(
+                      LineChartData(
+                        minX: 0,
+                        maxX: 25,
+                        minY: dustValue.reduce(min) - 0.2,
+                        maxY: dustValue.reduce(max) + 0.2,
+                        lineBarsData: [
+                          LineChartBarData(
+                              spots: [
+                                FlSpot(0, dustValue[0]),
+                                FlSpot(1, dustValue[1]),
+                                FlSpot(2, dustValue[2]),
+                                FlSpot(3, dustValue[3]),
+                                FlSpot(4, dustValue[4]),
+                                FlSpot(5, dustValue[5]),
+                                FlSpot(6, dustValue[6]),
+                                FlSpot(7, dustValue[7]),
+                                FlSpot(8, dustValue[8]),
+                                FlSpot(9, dustValue[9]),
+                                FlSpot(10, dustValue[10]),
+                                FlSpot(11, dustValue[11]),
+                                FlSpot(12, dustValue[12]),
+                                FlSpot(13, dustValue[13]),
+                                FlSpot(14, dustValue[14]),
+                                FlSpot(15, dustValue[15]),
+                                FlSpot(16, dustValue[16]),
+                                FlSpot(17, dustValue[17]),
+                                FlSpot(18, dustValue[18]),
+                                FlSpot(19, dustValue[19]),
+                                FlSpot(20, dustValue[20]),
+                                FlSpot(21, dustValue[21]),
+                                FlSpot(22, dustValue[22]),
+                                FlSpot(23, dustValue[23]),
+                              ]
+
+                          ),
+                        ],
+                        titlesData: FlTitlesData(
+                            show: true,
+
+                            topTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: false
+                                )
+                            ),
+
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: DleftTitleWidgets,
+                                reservedSize: 33,
+                              ),
+                            ),
+
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: bottomTitleWidgets,
+                              ),
+                            )
+                        ),
+                      ),
+                    )
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+    );
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-      var style = TextStyle(
+    var style = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Theme.of(context).primaryColor,
+      color: Theme
+          .of(context)
+          .primaryColor,
       fontFamily: 'Digital',
       fontSize: 10,
     );
@@ -855,76 +679,49 @@ class _GraphPageState extends State<GraphPage>{
 
     switch (x) {
       case 0:
-        text = '現在';
+        text = AppLocalizations
+            .of(context)
+            .now;
         break;
-      // case 1:
-      //   text = '1時間前';
-      //   break;
-      // case 2:
-      //   text = '2h';
-      //   break;
       case 3:
-        text = '3時間前';
+        text = '3' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 4:
-      //   text = '4h';
-      //   break;
-      // case 5:
-      //   text = '5h';
-      //   break;
       case 6:
-        text = '6時間前';
+        text = '6' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 7:
-      //   text = '7h';
-      //   break;
-      // case 8:
-      //   text = '8h';
-      //   break;
       case 9:
-        text = '9時間前';
+        text = '9' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 10:
-      //   text = '10h';
-      //   break;
-      // case 11:
-      //   text = '11h';
-      //   break;
       case 12:
-        text = '12時間前';
+        text = '12' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 13:
-      //   text = '13h';
-      //   break;
-      // case 14:
-      //   text = '14h';
-      //   break;
       case 15:
-        text = '15時間前';
+        text = '15' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 17:
-      //   text = '17h';
-      //   break;
       case 18:
-        text = '18時間前';
+        text = '18' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 19:
-      //   text = '19h';
-      //   break;
-      // case 20:
-      //   text = '20h';
-      //   break;
       case 21:
-        text = '21時間前';
+        text = '21' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
-      // case 22:
-      //   text = '22h';
-      //   break;
-      // case 23:
-      //   text = '23h';
-      //   break;
       case 24:
-        text = '24時間前';
+        text = '24' + AppLocalizations
+            .of(context)
+            .hour_ago;
         break;
       default:
         return const Text ('');
@@ -939,80 +736,37 @@ class _GraphPageState extends State<GraphPage>{
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     var style2 = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Theme.of(context).primaryColor,
+      color: Theme
+          .of(context)
+          .primaryColor,
       fontFamily: 'Digital',
       fontSize: 10,
     );
     String text;
     var y = (value).toInt();
     var x = (y).toString();
-    text=x;
-    return SideTitleWidget(
-        axisSide: meta.axisSide,
-        child: Text(text,softWrap: false, style:  style2),);
-  }
-
-  Widget DliftTitleWidgets(double value, TitleMeta meta) {
-    var style2 = TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).primaryColor,
-      fontFamily: 'Digital',
-      fontSize: 9,
-    );
-    String text3;
-    var x = value;
-    var y = x.toString();
-    switch (y){
-      case '0.4':
-        text3='0.4';
-        break;
-      case '0.6000000000000001':
-        text3='0.6';
-        break;
-      case'0.8':
-        text3='0.8';
-        break;
-      case '1.0':
-        text3='1.0';
-        break;
-      case '1.2':
-        text3='1.2';
-        break;
-      case '1.4':
-        text3='1.4';
-        break;
-      case '1.5999999999999999':
-        text3='1.6';
-        break;
-      default:
-        return const Text ('');
-    }
+    text = x;
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(text3, style:  style2),);
+      child: Text(text, softWrap: false, style: style2),);
   }
-}
 
-class Footer extends StatefulWidget {
-  const Footer();
-
-  @override
-  _Footer createState() => _Footer();
-}
-
-class _Footer extends State {
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-        ),
-      ],
+  Widget DleftTitleWidgets(double value, TitleMeta meta) {
+    var style2 = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Theme
+          .of(context)
+          .primaryColor,
+      fontFamily: 'Digital',
+      fontSize: 10,
     );
+    String _text;
+    var x = value.toStringAsFixed(1);
+    var y = (x).toString();
+    _text = y;
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(_text, softWrap: false, style: style2),);
   }
 }
 

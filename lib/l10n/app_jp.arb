@@ -14,6 +14,11 @@
   "language":"言語",
   "dark_mode":"ダークモード",
   "get_data":"データ取得",
-  "english":"英語",
-  "japanese":"日本語"
+  "theme1":"テーマ 1",
+  "theme2":"テーマ 2",
+  "theme3":"テーマ 3",
+  "hour_ago":"時間前",
+  "now":"現在",
+  "home":"ホーム",
+  "outlier" : "異常値検出"
 }

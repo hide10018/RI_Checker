@@ -28,6 +28,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   settings_ui: ^2.0.1
+  bordered_text: ^2.0.0
+  loading_animation_widget: ^1.2.0+3
 
   flutter:
     sdk: flutter
@@ -45,6 +47,8 @@ dependencies:
   flutter_speed_dial: ^6.0.0
   persistent_bottom_nav_bar: ^4.0.2
   flutter_settings_screens: ^0.3.0-null-safety
+  http: 0.13.5
+  flutter_riverpod: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -80,13 +84,8 @@ flutter:
           style: italic
 
   assets:
-    - assets/tmpicon.png
-    - assets/humicon.png
-    - assets/dusticon.png
-    - assets/get.png
-    - assets/chart2.png
-    - assets/dust-icon-6.jpg
-    - assets/ifn0112.png
+    - assets/
+
 
 
 

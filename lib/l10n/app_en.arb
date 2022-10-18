@@ -14,6 +14,11 @@
   "language":"Language",
   "dark_mode":"Dark Mode",
   "get_data":"Get Data",
-  "english":"English",
-  "japanese":"Japanese"
+  "theme1":"Theme 1",
+  "theme2":"Theme 2",
+  "theme3":"Theme 3",
+  "hour_ago":"h ago",
+  "now":"Now",
+  "home":"Home",
+  "outlier" : "Outlier"
 }
